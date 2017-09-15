@@ -1,0 +1,10 @@
+@className,GeneratedBean
+@package,bonebroth
+@classDescription,This class is a sample
+#@import,java.io.*
+@import,java.util.Date
+FIRST_NAME,String,first name
+COL_NAME,String,column name
+INT_A,int,number of A
+CREATED,Date,X Y Z
+REMARKS,
