@@ -1,0 +1,44 @@
+package $package;
+#if( !$imports.empty )
+
+#foreach( $o in $imports )
+import $o;
+#end
+#end
+
+/**
+ * ${classDescription}.
+ */
+public final class $className {
+#foreach( $o in $items )
+
+    /** ${o.name} */
+    private $o.type $o.id.camel;
+#end
+
+    /**
+     * ${constructorDescription}.
+     */
+    public ${className}() {
+        // empty
+    }
+#foreach( $o in $items )
+#set( $id = $o.id )
+
+    /**
+     * $m.message("template.getter", $o.name)
+     * @return $o.name
+     */
+    public $o.type get${id.pascal}() {
+        return $id.camel;
+    }
+
+    /**
+     * $m.message("template.setter", $o.name)
+     * @param $id.camel value to set
+     */
+    public void set${id.pascal}($o.type $id.camel) {
+        this.$id.camel = $id.camel;
+    }
+#end
+}
