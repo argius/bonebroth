@@ -4,11 +4,10 @@
 
 set -eu
 
-prodname=potaufeu
-ver=1.0.0
+prodname=bonebroth
+ver=1.0.0-beta1
 owner=argius
-#execname=$prodname
-execname=bonebroth
+execname=$prodname
 execdir=/usr/local/bin
 
 baseurl=https://github.com/$owner/$prodname
