@@ -3,6 +3,7 @@ package bonebroth;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import org.apache.commons.lang3.builder.*;
 import org.apache.velocity.*;
 import org.apache.velocity.app.*;
 
@@ -67,7 +68,7 @@ public final class Generator {
     }
 
     private void merge(final String templateLocation, VelocityContext ctx, Writer writer) {
-        log.debug(() -> "ctx=" + ctx);
+        log.debug(() -> "ctx=" + ReflectionToStringBuilder.toString(ctx));
         VelocityContext newCtx = new VelocityContext(ctx);
         newCtx.put("generator", App.version());
         newCtx.put("util", ContextUtilities.class);

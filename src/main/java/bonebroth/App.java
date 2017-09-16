@@ -1,13 +1,13 @@
 package bonebroth;
 
 import static bonebroth.Messages.message;
-import static bonebroth.PackagePrivate.toStringWithReflection;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.output.*;
 import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.builder.*;
 
 public final class App {
 
@@ -106,7 +106,7 @@ public final class App {
         log.debug(() -> "args=" + Arrays.asList(args));
         try {
             OptionSet opts = OptionSet.parseArguments(args);
-            log.info(() -> "opts=" + toStringWithReflection(opts));
+            log.info(() -> "opts=" + ReflectionToStringBuilder.toString(opts));
             if (opts.isShowVersion()) {
                 System.err.println(version());
             }
