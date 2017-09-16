@@ -44,13 +44,7 @@ public final class ContextHelper {
         if (!file.canRead()) {
             throw new IllegalArgumentException("can't read file: " + file);
         }
-        // default settings
-        ctx.put(MESSAGES, Messages.class);
-        ctx.put("m", Messages.class); // alias
-        ctx.put(CLASS_NAME, "UnnamedClass");
-        ctx.put(PACKAGE, "com.example");
-        ctx.put(CLASS_DESCRIPTION, "");
-        ctx.put(CTOR_DESCRIPTION, "");
+        initializeContext(ctx);
         switch (FilenameUtils.getExtension(file.getName()).toLowerCase()) {
             case "csv":
                 readCsv(file, ctx, ',');
@@ -68,6 +62,23 @@ public final class ContextHelper {
                 break;
             default:
                 throw new IOException("unsupported file type: " + file);
+        }
+    }
+
+    static void initializeContext(VelocityContext ctx) {
+        // default settings
+        Map<String, Object> m = new HashMap<>();
+        m.put(MESSAGES, Messages.class);
+        m.put("m", Messages.class); // alias
+        m.put(CLASS_NAME, "UnnamedClass");
+        m.put(PACKAGE, "com.example");
+        m.put(CLASS_DESCRIPTION, "");
+        m.put(CTOR_DESCRIPTION, "");
+        for (Entry<String, Object> entry : m.entrySet()) {
+            final String key = entry.getKey();
+            if (!ctx.containsKey(key)) {
+                ctx.put(key, entry.getValue());
+            }
         }
     }
 
