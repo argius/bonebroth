@@ -67,7 +67,9 @@ public final class Generator {
     }
 
     private void merge(final String templateLocation, VelocityContext ctx, Writer writer) {
+        log.debug(() -> "ctx=" + ctx);
         VelocityContext newCtx = new VelocityContext(ctx);
+        newCtx.put("generator", App.version());
         newCtx.put("util", ContextUtilities.class);
         velocityEngine.getTemplate(templateLocation, AppProperties.getCharsetForTemplate().name()).merge(newCtx, writer);
     }

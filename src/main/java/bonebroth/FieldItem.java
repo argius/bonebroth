@@ -45,4 +45,9 @@ public final class FieldItem {
         this.value = value;
     }
 
+    @Override
+    public String toString() {
+        return String.format("FieldItem(id=%s, type=%s, name=%s, value=%s)", id, type, name, value);
+    }
+
 }

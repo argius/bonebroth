@@ -1,0 +1,7 @@
+@className,Example
+@package,bonebroth
+@classDescription,Example of BoneBroth
+# comment
+# id, type, name, value
+EXAMPLE_MESSAGE,String,example message,"""hello"""
+VALUE_NUMBER,int,a number of value,3
