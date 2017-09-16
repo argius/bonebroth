@@ -17,6 +17,8 @@ jarfile=${prodname}-${ver}.jar
 execfile=$execdir/$execname
 javaopts=""
 
+current_script_expr="\$0"
+
 errexit() {
   printf "\033[31m[ERROR]\033[0m" ; echo " $1"
   echo "Installation incomplete."
@@ -70,6 +72,7 @@ case "`uname -a`" in
     ;;
   CYGWIN* )
     echo "adjusting for Cygwin"
+    current_script_expr="\`cygpath -m \$0\`"
     echo ""
     ;;
 esac
@@ -84,17 +87,16 @@ unzip -o $zipfile $jarfile || errexit "failed to unzip"
 {
     echo "#!/bin/sh"
     echo "JAVA_OPTS=\"\$JAVA_OPTS $javaopts\""
-    echo "java \$JAVA_OPTS -jar \"\${0}\" \"\$@\""
+    echo "java \$JAVA_OPTS -jar \"${current_script_expr}\" \"\$@\""
     echo "exit $?"
     echo ""
 } > boot.sh
-
 cat boot.sh $jarfile > $execfile
 test -f $execfile || errexit "failed to create execfile"
 chmod +x $execfile || errexit "failed to change a permission"
 
 echo "\"$prodname\" has been installed to $execfile ."
-echo "checking installation => `$execname --version`"
-test -n "`$execname --version`" || errexit "failed to check installation"
+echo "checking installation => `$execname --version 2>&1`"
+test -n "`$execname --version 2>&1`" || errexit "failed to check installation"
 echo ""
 echo "Installation completed."
