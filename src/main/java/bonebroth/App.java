@@ -4,10 +4,12 @@ import static bonebroth.Messages.message;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.*;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.output.*;
 import org.apache.commons.lang3.*;
 import org.apache.commons.lang3.builder.*;
+import org.apache.velocity.*;
 
 public final class App {
 
@@ -18,35 +20,26 @@ public final class App {
 
     static void generate(OptionSet opts) {
         log.debug(() -> "generate start");
-        final String template = StringUtils.defaultString(opts.getTemplate());
-        // TODO input allows csv array
-        String.join(",", opts.getInput());
-        final String input = StringUtils.defaultString(opts.getInput());
         final Optional<String> outputOpt = Optional.ofNullable(opts.getOutput());
         if (opts.isDoMkdirs() && outputOpt.isPresent()) {
             mkdirsIfDirNotExists(Paths.get(outputOpt.get()).getParent());
         }
         try (PrintWriter out = getPrintWriter(outputOpt)) {
-            Generator g = Generator.createForFile();
-            Path path = Paths.get(template);
-            g.generate(path, ContextHelper.read(input), out);
+            final VelocityContext ctx = ContextHelper.read(toFiles(opts.getInput()));
+            if (opts.isGeneratesBuildInBean()) {
+                Generator.createForResource().generate("bean", ctx, out);
+            }
+            else {
+                Path path = Paths.get(StringUtils.defaultString(opts.getTemplate()));
+                Generator.createForFile().generate(path, ctx, out);
+            }
+            out.flush();
         }
         log.debug(() -> "generate end");
     }
 
-    static void generateBean(OptionSet opts) {
-        log.debug(() -> "generateBean start");
-        final String input = opts.getInput();
-        final Optional<String> outputOpt = Optional.ofNullable(opts.getOutput());
-        if (opts.isDoMkdirs() && outputOpt.isPresent()) {
-            mkdirsIfDirNotExists(Paths.get(outputOpt.get()).getParent());
-        }
-        try (PrintWriter out = getPrintWriter(outputOpt)) {
-            Generator g = Generator.createForResource();
-            g.generate("bean", ContextHelper.read(input), out);
-            out.flush();
-        }
-        log.debug(() -> "generateBean end");
+    static File[] toFiles(String pathCsv) {
+        return Stream.of(StringUtils.defaultString(pathCsv).split(",")).map(File::new).toArray(File[]::new);
     }
 
     // for shield
@@ -113,14 +106,13 @@ public final class App {
             else if (opts.isHelp()) {
                 showHelp();
             }
-            else if (opts.isGeneratesBuildInBean()) {
-                if (opts.getInput() == null) {
-                    throw new IllegalArgumentException("bean-mode requires input");
-                }
-                generateBean(opts);
-            }
             else {
-                if (StringUtils.isBlank(opts.getTemplate()) || StringUtils.isBlank(opts.getInput())) {
+                if (opts.isGeneratesBuildInBean()) {
+                    if (StringUtils.isBlank(opts.getInput())) {
+                        throw new IllegalArgumentException("bean-mode requires input");
+                    }
+                }
+                else if (StringUtils.isBlank(opts.getInput()) || StringUtils.isBlank(opts.getTemplate())) {
                     throw new IllegalArgumentException("normal-mode requires template and input");
                 }
                 generate(opts);

@@ -27,6 +27,7 @@ public final class ContextHelper {
     private static final String CTOR_DESCRIPTION = "constructorDescription";
     private static final String DEFAULT_VALUE = "defaultValue";
 
+    @Deprecated // TODO Remove this, scheduled after the release of version 1.0.0-RC1
     public static VelocityContext read(String paths) {
         VelocityContext ctx = new VelocityContext();
         String[] a = paths.split(",");
@@ -36,6 +37,18 @@ public final class ContextHelper {
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
+        }
+        return ctx;
+    }
+
+    public static VelocityContext read(File... files) {
+        VelocityContext ctx = new VelocityContext();
+        try {
+            for (File file : files) {
+                readFile(file, ctx);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
         return ctx;
     }
