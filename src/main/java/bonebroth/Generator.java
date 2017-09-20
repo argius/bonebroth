@@ -38,7 +38,6 @@ public final class Generator {
     public void generate(String templateId, VelocityContext ctx, Writer writer) {
         final String templatePath = String.format("/%s/%s.vm", PACKAGE_NAME, templateId);
         merge(templatePath, ctx, writer);
-        velocityEngine.getTemplate(templatePath).merge(ctx, writer);
     }
 
     public void generate(Path templatePath, VelocityContext ctx, PrintWriter writer) {
