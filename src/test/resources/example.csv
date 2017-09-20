@@ -5,3 +5,4 @@
 # id, type, name, value
 EXAMPLE_MESSAGE,String,example message,"""hello"""
 VALUE_NUMBER,int,a number of value,3
+END_OF_DATA,boolean,end of data,false
