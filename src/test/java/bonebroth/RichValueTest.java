@@ -49,4 +49,13 @@ public final class RichValueTest {
         assertEquals("to_snake_case", f.apply("TO_SNAKE_CASE"));
     }
 
+    @Test
+    public void testGetChain() {
+        Function<String, String> f = x -> RichValue.of(x).getChain().toString();
+        assertEquals("to-chain-case", f.apply("toChainCase"));
+        assertEquals("to-chain-case", f.apply("ToChainCase"));
+        assertEquals("to-chain-case", f.apply("TO_CHAIN_CASE"));
+        assertEquals("to-chain-case", f.apply("TO_CHAIN-CASE"));
+    }
+
 }

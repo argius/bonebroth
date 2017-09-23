@@ -7,7 +7,7 @@ import java.util.stream.*;
 /**
  * This class has redundant converter methods for dynamic languages.
  */
-public final class RichValue implements StringBehavior {
+public final class RichValue implements StringBehavior, CharSequence {
 
     private static final String LIST_VALUE_SEPARATOR_PATTERN = "[\\|,]";
 
@@ -23,6 +23,21 @@ public final class RichValue implements StringBehavior {
 
     private RichValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public int length() {
+        return value.length();
+    }
+
+    @Override
+    public char charAt(int index) {
+        return value.charAt(index);
+    }
+
+    @Override
+    public CharSequence subSequence(int beginIndex, int endIndex) {
+        return value.subSequence(beginIndex, endIndex);
     }
 
     public RichValue toUpperCase() {
@@ -75,6 +90,14 @@ public final class RichValue implements StringBehavior {
 
     public RichValue getSnake() {
         return toSnakeCase();
+    }
+
+    public RichValue toChainCase() {
+        return newValue(toChainCase(value));
+    }
+
+    public RichValue getChain() {
+        return toChainCase();
     }
 
     private Stream<String> stream() {
