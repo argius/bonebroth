@@ -94,7 +94,7 @@ public final class App {
         return sb.toString();
     }
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         log.info(() -> "start (version: " + version() + ")");
         log.debug(() -> "args=" + Arrays.asList(args));
         try {
