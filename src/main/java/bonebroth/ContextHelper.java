@@ -97,7 +97,7 @@ public final class ContextHelper {
 
     static void readCsv(File file, VelocityContext ctx, char delimiter) throws IOException {
         final CSVFormat csvFormat = CSVFormat.DEFAULT.withDelimiter(delimiter);
-        String defaultValue = "\"\"";
+        String defaultValue = "";
         try (CSVParser p = CSVParser.parse(file, AppProperties.getCharsetForInput(), csvFormat)) {
             List<List<String>> list = IteratorUtils.toList(p.iterator()).stream().map(x -> {
                 List<String> a = IteratorUtils.toList(x.iterator());
