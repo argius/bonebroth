@@ -118,15 +118,13 @@ public final class ContextHelper {
                     // meta
                     final String directive = col1;
                     final String col2 = r.get(1);
-                    switch (StringUtils.removeStart(directive, "@")) {
+                    final String keyword = StringUtils.removeStart(directive, "@");
+                    switch (keyword) {
                         case CLASS_NAME:
-                            ctx.put(CLASS_NAME, col2);
-                            break;
                         case CLASS_DESCRIPTION:
-                            ctx.put(CLASS_DESCRIPTION, col2);
-                            break;
                         case PACKAGE:
-                            ctx.put(PACKAGE, col2);
+                        case CTOR_DESCRIPTION:
+                            ctx.put(keyword, col2);
                             break;
                         case IMPORT:
                             imports.add(col2);
