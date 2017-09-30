@@ -81,7 +81,7 @@ public final class $className {
 #end
     }
 #foreach( $o in $items )
-#set( $id = $o.id )
+  #set( $id = $o.id )
 
     /**
      * $m.message("template.getter", $o.name)
@@ -113,7 +113,8 @@ public final class $className {
 # id, type, name, value
 EXAMPLE_MESSAGE,String,example message,"""hello"""
 VALUE_NUMBER,int,a number of value,3
-END_OF_DATA,boolean,end of data,false```
+END_OF_DATA,boolean,end of data,false
+```
 
 
  * `example.conf` (TypeSafeConfig)
