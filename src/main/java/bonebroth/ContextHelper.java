@@ -26,6 +26,7 @@ public final class ContextHelper {
     private static final String IMPORT = "import";
     private static final String CTOR_DESCRIPTION = "constructorDescription";
     private static final String DEFAULT_VALUE = "defaultValue";
+    private static final String VALUE = "value";
 
     @Deprecated // TODO Remove this, scheduled after the release of version 1.0.0-RC1
     public static VelocityContext read(String paths) {
@@ -125,6 +126,10 @@ public final class ContextHelper {
                         case PACKAGE:
                         case CTOR_DESCRIPTION:
                             ctx.put(keyword, col2);
+                            break;
+                        case VALUE:
+                            final String col3 = r.get(2);
+                            ctx.put(col2, col3);
                             break;
                         case IMPORT:
                             imports.add(col2);
