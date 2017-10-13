@@ -28,20 +28,6 @@ public final class ContextHelper {
     private static final String DEFAULT_VALUE = "defaultValue";
     private static final String VALUE = "value";
 
-    @Deprecated // TODO Remove this, scheduled after the release of version 1.0.0-RC1
-    public static VelocityContext read(String paths) {
-        VelocityContext ctx = new VelocityContext();
-        String[] a = paths.split(",");
-        for (String string : a) {
-            try {
-                readFile(new File(string), ctx);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
-        return ctx;
-    }
-
     public static VelocityContext read(File... files) {
         VelocityContext ctx = new VelocityContext();
         try {
