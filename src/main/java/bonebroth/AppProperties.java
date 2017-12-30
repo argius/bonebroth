@@ -1,6 +1,7 @@
 package bonebroth;
 
 import java.nio.charset.*;
+import org.apache.commons.lang3.*;
 
 public final class AppProperties {
 
@@ -12,14 +13,16 @@ public final class AppProperties {
     }
 
     static Charset getCharset(String keyword) {
-        if (Boolean.getBoolean(PREFIX + ".encoding." + keyword + ".default")) {
+        final String propKey = PREFIX + ".encoding." + keyword;
+        if (Boolean.getBoolean(propKey + ".default")) {
             return Charset.defaultCharset();
         }
-        if (Boolean.getBoolean(PREFIX + ".encoding." + keyword)) {
+        final String propValue = System.getProperty(propKey);
+        if (StringUtils.isNotBlank(propValue)) {
             try {
-                return Charset.forName(System.getProperty(""));
+                return Charset.forName(propValue);
             } catch (UnsupportedCharsetException e) {
-                log.warn(() -> "at Charset.forName " + PREFIX + ".encoding." + keyword, e);
+                log.warn(() -> "at Charset.forName " + propKey, e);
                 // ignore
             }
         }
