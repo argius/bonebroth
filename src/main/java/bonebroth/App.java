@@ -2,6 +2,7 @@ package bonebroth;
 
 import static bonebroth.Messages.message;
 import java.io.*;
+import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
@@ -46,8 +47,9 @@ public final class App {
     @SuppressWarnings("resource")
     static PrintWriter getPrintWriter(Optional<String> outputOpt) {
         try {
-            return outputOpt.isPresent() ? new PrintWriter(outputOpt.get(), AppProperties.getCharsetForOutput().name())
-                    : new PrintWriter(new CloseShieldOutputStream(System.out));
+            Charset cs = AppProperties.getCharsetForOutput();
+            return outputOpt.isPresent() ? new PrintWriter(outputOpt.get(), cs.name())
+                    : new PrintWriter(new OutputStreamWriter(new CloseShieldOutputStream(System.out), cs));
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             throw new UncheckedIOException(e);
         }
