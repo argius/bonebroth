@@ -9,6 +9,7 @@ import org.apache.commons.csv.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang3.*;
 import org.apache.velocity.*;
+import org.yaml.snakeyaml.*;
 import com.typesafe.config.*;
 
 /**
@@ -56,6 +57,10 @@ public final class ContextHelper {
             case "conf":
             case "cnf":
                 readConfig(file, ctx);
+                break;
+            case "yaml":
+            case "yml":
+                readYaml(file, ctx);
                 break;
             case "properties":
                 readProperties(file, ctx);
@@ -149,6 +154,22 @@ public final class ContextHelper {
         ctx.put("cfg", config); // alias
         for (Entry<String, Object> entry : config.root().unwrapped().entrySet()) {
             ctx.put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    static void readYaml(File file, VelocityContext ctx) throws IOException {
+        try (InputStream is = new FileInputStream(file)) {
+            Yaml yaml = new Yaml();
+            final Object o = yaml.load(is);
+            ctx.put("yaml", o);
+            ctx.put("yml", o);
+            if (o instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, ?> m = (Map<String, ?>) o;
+                for (Entry<String, ?> entry : m.entrySet()) {
+                    ctx.put(entry.getKey(), entry.getValue());
+                }
+            }
         }
     }
 
