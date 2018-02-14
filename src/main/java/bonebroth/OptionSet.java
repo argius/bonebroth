@@ -14,6 +14,7 @@ public final class OptionSet {
     private String output;
     private boolean generatesBuildInBean;
     private boolean doMkdirs;
+    private boolean verbose;
     private boolean showVersion;
     private boolean help;
 
@@ -48,6 +49,10 @@ public final class OptionSet {
 
     public void setDoMkdirs(boolean doMkdirs) {
         this.doMkdirs = doMkdirs;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
     }
 
     public boolean isShowVersion() {
@@ -101,6 +106,7 @@ public final class OptionSet {
             o.output = stringValue(cl, OPTION_OUTPUT);
             o.generatesBuildInBean = boolValue(cl, OPTION_BEAN);
             o.doMkdirs = boolValue(cl, OPTION_MKDIRS);
+            o.verbose = boolValue(cl, OPTION_VERBOSE);
             o.showVersion = boolValue(cl, OPTION_VERSION);
             o.help = boolValue(cl, OPTION_HELP);
             log.debug(() -> "non-option args=" + cl.getArgList());
