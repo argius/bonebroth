@@ -185,4 +185,9 @@ public final class ContextHelper {
         }
     }
 
+    public static String toString(VelocityContext ctx) {
+        return Stream.of(ctx.getKeys()).map(x -> String.format("%s=<%s>", x, ctx.get(x)))
+                .collect(Collectors.joining(", "));
+    }
+
 }
