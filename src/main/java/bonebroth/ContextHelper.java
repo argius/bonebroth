@@ -3,8 +3,8 @@ package bonebroth;
 import java.io.*;
 import java.util.*;
 import java.util.Map.*;
+import java.util.function.*;
 import java.util.stream.*;
-import org.apache.commons.collections4.*;
 import org.apache.commons.csv.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang3.*;
@@ -91,25 +91,20 @@ public final class ContextHelper {
         final CSVFormat csvFormat = CSVFormat.DEFAULT.withDelimiter(delimiter);
         String defaultValue = "";
         try (CSVParser p = CSVParser.parse(file, AppProperties.getCharsetForInput(), csvFormat)) {
-            List<List<String>> list = IteratorUtils.toList(p.iterator()).stream().map(x -> {
-                List<String> a = IteratorUtils.toList(x.iterator());
-                Collections.addAll(a, "", "", "");
-                for (int i = 0; i < 2; i++) {
-                    a.set(i, a.get(i).trim());
-                }
-                return a;
-            }).collect(Collectors.toList());
             final List<String> imports = new ArrayList<>();
             final List<FieldItem> items = new ArrayList<>();
-            for (List<String> r : list) {
-                final String col1 = StringUtils.trimToEmpty(r.get(0));
+            for (CSVRecord r : p) {
+                Queue<String> q = StreamSupport.stream(r.spliterator(), false)
+                        .collect(Collectors.toCollection(ArrayDeque::new));
+                Supplier<String> nextColumn = () -> StringUtils.defaultString(q.poll());
+                final String col1 = StringUtils.trimToEmpty(nextColumn.get());
                 if (StringUtils.isBlank(col1) || col1.startsWith("#")) {
                     continue;
                 }
+                final String col2 = nextColumn.get().trim();
                 if (col1.startsWith("@")) {
                     // meta
                     final String directive = col1;
-                    final String col2 = r.get(1);
                     final String keyword = StringUtils.removeStart(directive, "@");
                     switch (keyword) {
                         case CLASS_NAME:
@@ -119,7 +114,7 @@ public final class ContextHelper {
                             ctx.put(keyword, col2);
                             break;
                         case VALUE:
-                            final String col3 = r.get(2);
+                            final String col3 = nextColumn.get();
                             ctx.put(col2, col3);
                             break;
                         case IMPORT:
@@ -134,12 +129,13 @@ public final class ContextHelper {
                     }
                 }
                 else {
+                    final String col3 = nextColumn.get();
+                    final String col4 = nextColumn.get();
                     FieldItem accessor = new FieldItem();
-                    int index = 0;
                     accessor.setId(RichValue.of(col1));
-                    accessor.setType(StringUtils.defaultIfBlank(r.get(++index), "String"));
-                    accessor.setName(StringUtils.defaultIfBlank(r.get(++index), col1));
-                    accessor.setValue(StringUtils.defaultIfBlank(r.get(++index), defaultValue));
+                    accessor.setType(StringUtils.defaultIfBlank(col2, "String"));
+                    accessor.setName(StringUtils.defaultIfBlank(col3, col1));
+                    accessor.setValue(StringUtils.defaultIfBlank(col4, defaultValue));
                     items.add(accessor);
                 }
             }
