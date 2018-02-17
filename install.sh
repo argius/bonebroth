@@ -5,7 +5,7 @@
 set -eu
 
 prodname=bonebroth
-ver=1.1.0
+ver=1.1.1
 owner=argius
 execname=$prodname
 execdir=/usr/local/bin
