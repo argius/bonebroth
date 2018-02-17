@@ -21,17 +21,32 @@ public final class App {
 
     static void generate(OptionSet opts) {
         log.debug(() -> "generate start");
+        final boolean verbose = opts.isVerbose();
         final Optional<String> outputOpt = Optional.ofNullable(opts.getOutput());
         if (opts.isDoMkdirs() && outputOpt.isPresent()) {
-            mkdirsIfDirNotExists(Paths.get(outputOpt.get()).getParent());
+            final Path parentDir = Paths.get(outputOpt.get()).getParent();
+            if (verbose) {
+                System.err.println("  do mkdirs: " + parentDir);
+            }
+            mkdirsIfDirNotExists(parentDir);
         }
         try (PrintWriter out = getPrintWriter(outputOpt)) {
             final VelocityContext ctx = ContextHelper.read(toFiles(opts.getInput()));
+            if (verbose) {
+                String s = ContextHelper.toString(ctx);
+                System.err.println("  context: " + (s.isEmpty() ? "(empty)" : s));
+            }
             if (opts.isGeneratesBuildInBean()) {
+                if (verbose) {
+                    System.err.println("  template: bean mode");
+                }
                 Generator.createForResource().generate("bean", ctx, out);
             }
             else {
                 Path path = Paths.get(StringUtils.defaultString(opts.getTemplate()));
+                if (verbose) {
+                    System.err.println("  template: " + path);
+                }
                 Generator.createForFile().generate(path, ctx, out);
             }
             out.flush();
@@ -102,6 +117,7 @@ public final class App {
         try {
             OptionSet opts = OptionSet.parseArguments(args);
             log.info(() -> "opts=" + ReflectionToStringBuilder.toString(opts));
+            final boolean verbose = opts.isVerbose();
             if (opts.isShowVersion()) {
                 System.err.println(version());
             }
@@ -109,6 +125,10 @@ public final class App {
                 showHelp();
             }
             else {
+                if (verbose) {
+                    System.err.println(version());
+                    System.err.println("start");
+                }
                 if (opts.isGeneratesBuildInBean()) {
                     if (StringUtils.isBlank(opts.getInput())) {
                         throw new IllegalArgumentException("bean-mode requires input");
@@ -118,6 +138,9 @@ public final class App {
                     throw new IllegalArgumentException("normal-mode requires template and input");
                 }
                 generate(opts);
+                if (verbose) {
+                    System.err.println("end");
+                }
             }
         } catch (Exception e) {
             log.error(() -> "", e);
